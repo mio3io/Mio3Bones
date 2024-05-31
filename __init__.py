@@ -14,6 +14,27 @@ bl_info = {
 }
 
 
+def select_current_selection(armature):
+    current_selection = [
+        (bone.name, bone.select_head, bone.select_tail)
+        for bone in armature.edit_bones
+        if bone.select
+    ]
+    if armature.use_mirror_x:
+        bpy.ops.armature.select_mirror(extend=True)
+    return current_selection
+
+
+def restore_current_selection(armature, current_selection):
+    if armature.use_mirror_x:
+        bpy.ops.armature.select_all(action="DESELECT")
+        for bone_name, select_head, select_tail in current_selection:
+            bone = armature.edit_bones[bone_name]
+            bone.select = True
+            bone.select_head = select_head
+            bone.select_tail = select_tail
+
+
 def split_bone_chains(selected_bones):
     bone_chains = []
     current_chain = []
@@ -38,11 +59,17 @@ class MIO3_OT_bone_evenly(Operator):
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
+
+        armature = context.object.data
+        current_selection = select_current_selection(armature)
+
         selected_bones = bpy.context.selected_bones
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
                 self.evenly(chain)
+
+        restore_current_selection(armature, current_selection)
         return {"FINISHED"}
 
     # 反復して調整
@@ -89,11 +116,17 @@ class MIO3_OT_bone_align(Operator):
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
+
+        armature = context.object.data
+        current_selection = select_current_selection(armature)
+
         selected_bones = bpy.context.selected_bones
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
                 self.seiretu(chain)
+
+        restore_current_selection(armature, current_selection)
         return {"FINISHED"}
 
     def seiretu(self, chain):
@@ -141,7 +174,8 @@ class MIO3_OT_bone_numbering(Operator):
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
-        selected_bones = bpy.context.selected_bones
+
+        selected_bones = [bone for bone in bpy.context.selected_bones if bone.select]
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
@@ -164,7 +198,7 @@ class MIO3_OT_bone_numbering(Operator):
 
         temp_names = {}
         for i, bone in enumerate(sorted_bones):
-            temp_name = f"TEMP_mio3bones_{i:03d}"
+            temp_name = f"TEMP_mio3bones_{i:03d}_{bone.name}"
             temp_names[bone.name] = temp_name
             bone.name = temp_name
 
