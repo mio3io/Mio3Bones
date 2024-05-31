@@ -63,7 +63,7 @@ class MIO3_OT_bone_evenly(Operator):
         armature = context.object.data
         current_selection = select_current_selection(armature)
 
-        selected_bones = bpy.context.selected_bones
+        selected_bones = context.selected_bones
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
@@ -120,7 +120,7 @@ class MIO3_OT_bone_align(Operator):
         armature = context.object.data
         current_selection = select_current_selection(armature)
 
-        selected_bones = bpy.context.selected_bones
+        selected_bones = context.selected_bones
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
@@ -175,7 +175,7 @@ class MIO3_OT_bone_numbering(Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
 
-        selected_bones = [bone for bone in bpy.context.selected_bones if bone.select]
+        selected_bones = [bone for bone in context.selected_bones if bone.select]
         if selected_bones:
             bone_chains = split_bone_chains(selected_bones)
             for chain in bone_chains:
