@@ -131,11 +131,12 @@ class MIO3_OT_bone_numbering(Operator):
         items=[
             (".", "Dot (.)", ""),
             ("_", "Under Bar (_)", ""),
+            (" ", "Space", ""),
         ],
-        options={'HIDDEN'}
     )
 
-    endbone: BoolProperty(name="EndBone", default=False, options={'HIDDEN'})
+    endbone: BoolProperty(name="EndBone", default=False)
+    suffix: BoolProperty(name="Suffix L/R", default=False)
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -149,6 +150,12 @@ class MIO3_OT_bone_numbering(Operator):
 
     def rename_bone(self, chain):
         name = chain[0].name
+        base_name = name
+        suffix = ""
+        if self.suffix and name.endswith(("_L", "_R", ".L", ".R")):
+            suffix = name[-2:]
+            base_name = name[:-2]
+
         sorted_bones = []
         renamed_bones = set()
         for bone in chain:
@@ -167,9 +174,9 @@ class MIO3_OT_bone_numbering(Operator):
             ]
             if original_name != name:
                 if self.endbone and i == len(sorted_bones) - 1:
-                    bone.name = f"{name}{self.delim}end"
+                    bone.name = f"{base_name}{self.delim}end{suffix}"
                 else:
-                    bone.name = f"{name}{self.delim}{i:03d}"
+                    bone.name = f"{base_name}{self.delim}{i:03d}{suffix}"
             else:
                 bone.name = name
 
@@ -198,6 +205,7 @@ def menu_name(self, context):
 
 translation_dict = {
     "ja_JP": {
+        ("*", "Suffix L/R"): "L/Rを接尾辞にする",
         ("*", "Delim"): "デリミタ",
         ("*", "EndBone"): "エンドボーン",
         ("*", "Evenly Bones"): "ボーンを均等",
