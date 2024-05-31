@@ -129,13 +129,13 @@ class MIO3_OT_bone_numbering(Operator):
         name="Delim",
         default=".",
         items=[
-            ("_", "Under Bar (_)", ""),
             (".", "Dot (.)", ""),
-            (" ", "Space", ""),
+            ("_", "Under Bar (_)", ""),
         ],
+        options={'HIDDEN'}
     )
 
-    endbone: BoolProperty(name="EndBone", default=False)
+    endbone: BoolProperty(name="EndBone", default=False, options={'HIDDEN'})
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
