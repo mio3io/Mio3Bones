@@ -130,18 +130,19 @@ class MIO3_OT_bone_align(Operator):
         return {"FINISHED"}
 
     def seiretu(self, chain):
-        total_length = sum(bone.length for bone in chain)
         head = chain[0].head
         tail = chain[-1].tail
-        roll = chain[0].roll
         direction = (tail - head).normalized()
-        bone_length = total_length / len(chain)
+
+        positions = [head]
+        for bone in chain:
+            positions.append(positions[-1] + direction * bone.length)
 
         for i, bone in enumerate(chain):
-            bone.head = head + direction * (i * bone_length)
-            bone.tail = head + direction * ((i + 1) * bone_length)
+            bone.head = positions[i]
+            bone.tail = positions[i + 1]
             if self.roll:
-                bone.roll = roll
+                bone.roll = chain[0].roll
 
 
 def sort_bones(bone, sorted_bones, renamed_bones, selected_bones):
