@@ -112,6 +112,7 @@ class MIO3_OT_bone_align(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     roll: BoolProperty(name="Unify roles", default=False)
+    preserve_length: BoolProperty(name="Preserve Length Bone", default=False)
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -133,16 +134,30 @@ class MIO3_OT_bone_align(Operator):
         head = chain[0].head
         tail = chain[-1].tail
         direction = (tail - head).normalized()
+        roll = chain[0].roll
+        total_distance = (tail - head).length
 
-        positions = [head]
-        for bone in chain:
-            positions.append(positions[-1] + direction * bone.length)
+        if self.preserve_length:
+            positions = [head]
+            for bone in chain:
+                positions.append(positions[-1] + direction * bone.length)
+            for i, bone in enumerate(chain):
+                bone.head = positions[i]
+                bone.tail = positions[i + 1]
+        else:
+            length_ratios = [
+                bone.length / sum(bone.length for bone in chain) for bone in chain
+            ]
+            current_length = 0
+            for i, bone in enumerate(chain):
+                bone_length = total_distance * length_ratios[i]
+                bone.head = head + direction * current_length
+                current_length += bone_length
+                bone.tail = head + direction * current_length
 
-        for i, bone in enumerate(chain):
-            bone.head = positions[i]
-            bone.tail = positions[i + 1]
-            if self.roll:
-                bone.roll = chain[0].roll
+        if self.roll:
+            for bone in chain:
+                bone.roll = roll
 
 
 def sort_bones(bone, sorted_bones, renamed_bones, selected_bones):
@@ -247,6 +262,7 @@ translation_dict = {
         ("*", "Align Bones (child)"): "ボーンを整列（末端を基準）",
         ("*", "Numbering Bones"): "ボーンに通し番号をふる",
         ("*", "Unify roles"): "ロールを統一",
+        ("*", "Preserve Length Bone"): "各ボーンの長さを維持",
     }
 }
 
