@@ -60,7 +60,7 @@ class MIO3_OT_bone_evenly(Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
 
-        armature = context.object.data
+        armature = context.active_object.data
         current_selection = select_current_selection(armature)
 
         selected_bones = context.selected_bones
@@ -118,7 +118,7 @@ class MIO3_OT_bone_align(Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         bpy.ops.object.mode_set(mode="EDIT")
 
-        armature = context.object.data
+        armature = context.active_object.data
         current_selection = select_current_selection(armature)
 
         selected_bones = context.selected_bones
