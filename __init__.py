@@ -180,7 +180,6 @@ class MIO3_OT_bone_numbering(Operator):
         items=[
             (".", "Dot (.)", ""),
             ("_", "Under Bar (_)", ""),
-            (" ", "Space", ""),
         ],
     )
 
