@@ -101,27 +101,38 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "suffix": "{}_",
             "suffix_type": False,
         },
+         "Generic": {
+            "pattern": r"([^.]+)(\.\d+)?$",
+            "join": "{}{}",
+            "separator": "",
+            "suffix": "{}",
+            "suffix_type": False,
+        },
     }
 
     def detect_convention(self, name):
         for conv, data in self.conventions.items():
             if re.match(data["pattern"], name):
                 return conv
-        return None
+        return "Generic"
 
     def split_name_and_suffix(self, name, convention):
         pattern = self.conventions[convention]["pattern"]
         match = re.match(pattern, name)
         if match:
-            if self.conventions[convention]["suffix_type"]:
+            if convention == "Generic":
+                return match.group(1), "", match.group(2) or ""
+            elif self.conventions[convention]["suffix_type"]:
                 return match.group(1), match.group(2), match.group(3) or ""
             else:
                 return match.group(2), match.group(1), match.group(3) or ""
-        return name, None, ""
+        return name, "", ""
 
-    def join_name_and_suffix(self, name, suffix, number, convention):
+    def join_name_and_suffix(self, name, suffix, number, convention, from_conv):
         conv_data = self.conventions[convention]
-        if self.conventions[convention]["suffix_type"]:
+        if from_conv == "Generic":
+            return "".join([name, number])
+        elif self.conventions[convention]["suffix_type"]:
             newstr = "".join([name, conv_data["suffix"].format(suffix), number])
         else:
             newstr = "".join([conv_data["suffix"].format(suffix), name, number])
@@ -155,7 +166,7 @@ class MIO3BONE_OT_ConvertNames(Operator):
                     )
                     converted_base = self.convert_name(base_name, convert_types)
                     new_name = self.join_name_and_suffix(
-                        converted_base, suffix, number, convert_types
+                        converted_base, suffix, number, convert_types, from_conv
                     )
                     if new_name != bone.name:
                         bone.name = new_name
