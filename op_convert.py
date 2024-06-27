@@ -54,59 +54,51 @@ class MIO3BONE_OT_ConvertNames(Operator):
     conventions = {
         "UpperArm_L": {
             "pattern": r"([A-Z][a-z]*(?:[A-Z][a-z]*)*)_([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": "",
             "suffix": "_{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "Upper Arm_L": {
             "pattern": r"([^.]+)\s*_([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": " ",
             "suffix": "_{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "Upper_Arm_L": {
             "pattern": r"([^.]+)_([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": "_",
             "suffix": "_{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "UpperArm.L": {
             "pattern": r"([A-Z][a-z]*(?:[A-Z][a-z]*)*)\.([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": "",
             "suffix": ".{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "Upper Arm.L": {
             "pattern": r"([^.]+)\s*\.([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": " ",
             "suffix": ".{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "Upper_Arm.L": {
             "pattern": r"([^.]+)\.([LR])(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": "_",
             "suffix": ".{}",
-            "suffix_type": True,
+            "side_type": "suffix",
         },
         "L_UpperArm": {
             "pattern": r"([LR])_([^.]+)(\.\d+)?$",
-            "join": "{}{}{}",
             "separator": "",
             "suffix": "{}_",
-            "suffix_type": False,
+            "side_type": "prefix",
         },
-         "Generic": {
+        "Generic": {
             "pattern": r"([^.]+)(\.\d+)?$",
-            "join": "{}{}",
             "separator": "",
             "suffix": "{}",
-            "suffix_type": False,
+            "side_type": "none",
         },
     }
 
@@ -120,29 +112,30 @@ class MIO3BONE_OT_ConvertNames(Operator):
         pattern = self.conventions[convention]["pattern"]
         match = re.match(pattern, name)
         if match:
-            if convention == "Generic":
-                return match.group(1), "", match.group(2) or ""
-            elif self.conventions[convention]["suffix_type"]:
+            if self.conventions[convention]["side_type"] == "suffix":
                 return match.group(1), match.group(2), match.group(3) or ""
-            else:
+            elif self.conventions[convention]["side_type"] == "prefix":
                 return match.group(2), match.group(1), match.group(3) or ""
+            else:
+                return match.group(1), "", match.group(2) or ""
         return name, "", ""
 
     def join_name_and_suffix(self, name, suffix, number, convention, from_conv):
         conv_data = self.conventions[convention]
         if from_conv == "Generic":
             return "".join([name, number])
-        elif self.conventions[convention]["suffix_type"]:
+        elif self.conventions[convention]["side_type"] == "suffix":
             newstr = "".join([name, conv_data["suffix"].format(suffix), number])
         else:
             newstr = "".join([conv_data["suffix"].format(suffix), name, number])
+
         return newstr
 
     def convert_name(self, name, to_conv):
         words = re.findall(r"[A-Z][a-z]*|[a-z]+", name)
         name = name.rstrip()
         separator = self.conventions[to_conv]["separator"]
-        if to_conv == "UpperArm_L":
+        if self.conventions[to_conv]["separator"] == "":
             newstr = separator.join(word.capitalize() for word in words)
         else:
             newstr = separator.join(words)
