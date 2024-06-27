@@ -16,11 +16,6 @@ class MIO3BONE_Props(PropertyGroup):
                 "",
             ),
             (
-                "Upper Arm.L",
-                "Upper Arm.L",
-                "",
-            ),
-            (
                 "Upper Arm_L",
                 "Upper Arm_L",
                 "",
@@ -28,6 +23,21 @@ class MIO3BONE_Props(PropertyGroup):
             (
                 "Upper_Arm_L",
                 "Upper_Arm_L",
+                "",
+            ),
+            (
+                "UpperArm.L",
+                "UpperArm.L",
+                "",
+            ),
+            (
+                "Upper Arm.L",
+                "Upper Arm.L",
+                "",
+            ),
+            (
+                "Upper_Arm.L",
+                "Upper_Arm.L",
                 "",
             ),
         ],
@@ -49,13 +59,6 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "suffix": "_{}",
             "suffix_type": True,
         },
-        "Upper Arm.L": {
-            "pattern": r"([^.]+)\s*\.([LR])(\.\d+)?$",
-            "join": "{}{}{}",
-            "separator": " ",
-            "suffix": ".{}",
-            "suffix_type": True,
-        },
         "Upper Arm_L": {
             "pattern": r"([^.]+)\s*_([LR])(\.\d+)?$",
             "join": "{}{}{}",
@@ -68,6 +71,27 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "join": "{}{}{}",
             "separator": "_",
             "suffix": "_{}",
+            "suffix_type": True,
+        },
+        "UpperArm.L": {
+            "pattern": r"([A-Z][a-z]*(?:[A-Z][a-z]*)*)\.([LR])(\.\d+)?$",
+            "join": "{}{}{}",
+            "separator": "",
+            "suffix": ".{}",
+            "suffix_type": True,
+        },
+        "Upper Arm.L": {
+            "pattern": r"([^.]+)\s*\.([LR])(\.\d+)?$",
+            "join": "{}{}{}",
+            "separator": " ",
+            "suffix": ".{}",
+            "suffix_type": True,
+        },
+        "Upper_Arm.L": {
+            "pattern": r"([^.]+)\.([LR])(\.\d+)?$",
+            "join": "{}{}{}",
+            "separator": "_",
+            "suffix": ".{}",
             "suffix_type": True,
         },
         "L_UpperArm": {
@@ -97,7 +121,10 @@ class MIO3BONE_OT_ConvertNames(Operator):
 
     def join_name_and_suffix(self, name, suffix, number, convention):
         conv_data = self.conventions[convention]
-        newstr = "".join([name, conv_data["suffix"].format(suffix), number])
+        if self.conventions[convention]["suffix_type"]:
+            newstr = "".join([name, conv_data["suffix"].format(suffix), number])
+        else:
+            newstr = "".join([conv_data["suffix"].format(suffix), name, number])
         return newstr
 
     def convert_name(self, name, to_conv):
