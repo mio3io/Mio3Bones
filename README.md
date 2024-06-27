@@ -29,6 +29,6 @@ Blender の `Edit > Preferences > Addons > Install` を開き、ダウンロー�
 元の名前が一定のパターンにあてはまるものでないとうまく変換されないことがあります。
 表示されているものだけを変換する仕様になっているため、必要な部分のみ変換してください。
 
-パターン例（UpperArm_L/Upper Arm.L/Upper Arm_L/Upper_Arm_L/L_UpperArm）
+パターン例（UpperArm_L/Upper Arm_L/Upper_Arm_L/UpperArm.L/Upper Arm.L/Upper_Arm.L/L_UpperArm）
 
 変換されないパターン（Name.Name.L）ドットが複数あるパターン
