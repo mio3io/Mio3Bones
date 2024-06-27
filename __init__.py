@@ -2,6 +2,7 @@ import bpy
 from bpy.types import Operator
 from bpy.props import EnumProperty, BoolProperty
 from bpy.app.translations import pgettext
+from . import op_convert
 
 bl_info = {
     "name": "Mio3 Bones",
@@ -262,6 +263,9 @@ translation_dict = {
         ("*", "Numbering Bones"): "ボーンに通し番号をふる",
         ("*", "Unify roles"): "ロールを統一",
         ("*", "Preserve Length Bone"): "各ボーンの長さを維持",
+
+        ("*", "After Format"): "変換後",
+
     }
 }
 
@@ -273,6 +277,7 @@ def register():
     bpy.app.translations.register(__name__, translation_dict)
     for cls in classes:
         bpy.utils.register_class(cls)
+    op_convert.register()
     bpy.types.VIEW3D_MT_transform_armature.append(menu_transform)
     bpy.types.VIEW3D_MT_edit_armature_names.append(menu_name)
     bpy.types.VIEW3D_MT_armature_context_menu.append(menu)
@@ -281,6 +286,7 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
+    op_convert.unregister()
     bpy.types.VIEW3D_MT_transform_armature.remove(menu_transform)
     bpy.types.VIEW3D_MT_edit_armature_names.remove(menu_name)
     bpy.types.VIEW3D_MT_armature_context_menu.remove(menu)
