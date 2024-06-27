@@ -59,13 +59,13 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "side_type": "suffix",
         },
         "Upper Arm_L": {
-            "pattern": r"([^.]+)\s*_([LR])(\.\d+)?$",
+            "pattern": r"(.+)\s*_([LR])(?:(\.\d+))?$",
             "separator": " ",
             "suffix": "_{}",
             "side_type": "suffix",
         },
         "Upper_Arm_L": {
-            "pattern": r"([^.]+)_([LR])(\.\d+)?$",
+            "pattern": r"(.+)_([LR])(?:(\.\d+))?$",
             "separator": "_",
             "suffix": "_{}",
             "side_type": "suffix",
@@ -77,13 +77,13 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "side_type": "suffix",
         },
         "Upper Arm.L": {
-            "pattern": r"([^.]+)\s*\.([LR])(\.\d+)?$",
+            "pattern": r"(.+)\s*\.([LR])(?:(\.\d+))?$",
             "separator": " ",
             "suffix": ".{}",
             "side_type": "suffix",
         },
         "Upper_Arm.L": {
-            "pattern": r"([^.]+)\.([LR])(\.\d+)?$",
+            "pattern": r"(.+)\.([LR])(?:(\.\d+))?$",
             "separator": "_",
             "suffix": ".{}",
             "side_type": "suffix",
@@ -95,7 +95,7 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "side_type": "prefix",
         },
         "Generic": {
-            "pattern": r"([^.]+)(\.\d+)?$",
+            "pattern": r"(.+?)(?:(\.\d+))?$",
             "separator": "",
             "suffix": "{}",
             "side_type": "none",
