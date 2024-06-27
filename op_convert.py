@@ -47,24 +47,35 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "join": "{}{}{}",
             "separator": "",
             "suffix": "_{}",
+            "suffix_type": True,
         },
         "Upper Arm.L": {
-            "pattern": r"(.+)\s*\.([LR])(\.\d+)?$",
+            "pattern": r"([^.]+)\s*\.([LR])(\.\d+)?$",
             "join": "{}{}{}",
             "separator": " ",
             "suffix": ".{}",
+            "suffix_type": True,
         },
         "Upper Arm_L": {
-            "pattern": r"(.+)\s*_([LR])(\.\d+)?$",
+            "pattern": r"([^.]+)\s*_([LR])(\.\d+)?$",
             "join": "{}{}{}",
             "separator": " ",
             "suffix": "_{}",
+            "suffix_type": True,
         },
         "Upper_Arm_L": {
-            "pattern": r"(.+)_([LR])(\.\d+)?$",
+            "pattern": r"([^.]+)_([LR])(\.\d+)?$",
             "join": "{}{}{}",
             "separator": "_",
             "suffix": "_{}",
+            "suffix_type": True,
+        },
+        "L_UpperArm": {
+            "pattern": r"([LR])_([^.]+)(\.\d+)?$",
+            "join": "{}{}{}",
+            "separator": "",
+            "suffix": "{}_",
+            "suffix_type": False,
         },
     }
 
@@ -78,7 +89,10 @@ class MIO3BONE_OT_ConvertNames(Operator):
         pattern = self.conventions[convention]["pattern"]
         match = re.match(pattern, name)
         if match:
-            return match.group(1), match.group(2), match.group(3) or ""
+            if self.conventions[convention]["suffix_type"]:
+                return match.group(1), match.group(2), match.group(3) or ""
+            else:
+                return match.group(2), match.group(1), match.group(3) or ""
         return name, None, ""
 
     def join_name_and_suffix(self, name, suffix, number, convention):
