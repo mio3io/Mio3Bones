@@ -255,7 +255,7 @@ class MIO3BONE_UL_PrefixList(bpy.types.UIList):
         self, context, layout, data, item, icon, active_data, active_propname, index
     ):
         row = layout.row(align=True)
-        row.label(text=f"{item.prefix}", icon="GROUP_VERTEX")
+        row.label(text=f"{item.prefix}", icon="PINNED")
 
 
 classes = (
