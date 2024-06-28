@@ -41,6 +41,7 @@ Blender の `Edit > Preferences > Addons > Install` を開き、ダウンロー�
 -   Hair.001
 -   Hair_L.001
 -   Hair.L.001
+-   (CustomPrefix_)Arm_L
 
 認識されないパターン
 
@@ -48,10 +49,4 @@ Blender の `Edit > Preferences > Addons > Install` を開き、ダウンロー�
 
 正常に変換されないパターン
 
--   IK_Arm_L のような大文字パターンは I と K は分離され I_K_Arm_L のように扱われます
-
-認識されないパターンの場合、「編集」＞「名前を一括変換」＞「ボーン」を使って可能な範囲で認識されるパターンになるように変換しておくとよいでしょう。
-
-#### ToDo
-
-AvatarName_ / Twist_ / Support_ / Hair_ などのカスタムプレフィックスへの対応
+-   IK_Arm_L のような大文字パターンは I と K は分離され I_K_Arm_L のように扱われるため、カスタムプレフィックスとして登録してください
