@@ -102,6 +102,23 @@ class MIO3BONE_OT_ConvertNames(Operator):
         },
     }
 
+    prefixes = []
+
+    __prefix = ""
+    __body = ""
+    __side = ""
+    __number = ""
+
+    def detect_prefix(self, name):
+        self.__prefix = ""
+        for prefix in self.prefixes:
+            if name.startswith(prefix):
+                self.__prefix = prefix
+                self.__body = name[len(prefix) :]
+                return self.__body
+        self.__body = name
+        return name
+
     def detect_convention(self, name):
         for conv, data in self.patterns.items():
             if re.match(data["pattern"], name):
@@ -125,9 +142,9 @@ class MIO3BONE_OT_ConvertNames(Operator):
         if from_pattern == "Generic":
             return "".join([name, number])
         elif self.patterns[convert_type]["side_type"] == "suffix":
-            newstr = "".join([name, conv_data["side_format"].format(side), number])
+            newstr = "".join([self.__prefix, name, conv_data["side_format"].format(side), number])
         else:
-            newstr = "".join([conv_data["side_format"].format(side), name, number])
+            newstr = "".join([self.__prefix, conv_data["side_format"].format(side), name, number])
 
         return newstr
 
@@ -152,10 +169,12 @@ class MIO3BONE_OT_ConvertNames(Operator):
 
         for bone in armature.pose.bones:
             if not bone.bone.hide:
-                from_pattern = self.detect_convention(bone.name)
+
+                name = self.detect_prefix(bone.name)
+                from_pattern = self.detect_convention(name)
                 if from_pattern:
                     base_name, side, number = self.split_name_and_side(
-                        bone.name, from_pattern
+                        name, from_pattern
                     )
                     converted_base = self.convert_name(base_name, convert_type)
                     new_name = self.join_name_and_side(
@@ -191,9 +210,7 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.WindowManager.mio3bone = PointerProperty(
-        type=MIO3BONE_Props
-    )
+    bpy.types.WindowManager.mio3bone = PointerProperty(type=MIO3BONE_Props)
 
 
 def unregister():
