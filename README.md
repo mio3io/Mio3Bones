@@ -40,10 +40,9 @@ Blender の `Edit > Preferences > Addons > Install` を開き、ダウンロー�
 -   L_UpperArm
 -   LeftUpperArm
 -   UpperArmLeft
+-   Hair
 -   Hair.001
--   Hair_L.001
--   Hair.L.001
--   (CustomPrefix_)Arm_L
+-   (CustomPrefix\_)Arm_L
 
 正常に変換されないパターン
 

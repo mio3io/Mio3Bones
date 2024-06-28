@@ -127,7 +127,7 @@ class MIO3BONE_OT_ConvertNames(Operator):
             "side_type": "suffix",
         },
         {
-            "pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$",
+            "pattern": r"^(Left|Right)([^a-z].*)(?:(\.\d+))?$",
             "side_type": "prefix",
         },
         {
@@ -177,7 +177,10 @@ class MIO3BONE_OT_ConvertNames(Operator):
         return newstr
 
     def convert_name(self, name, to_conv):
-        words = re.findall(r"[A-Z][a-z]*|[a-z]+", name)
+        if re.match(r'^[a-zA-Z0-9\s_.\-]+$', name):
+            words = re.findall(r"[A-Z][a-z]*|[a-z]+", name)
+        else:
+            words = [name]
         separator = self.conventions[to_conv]["separator"]
         if self.conventions[to_conv]["separator"] == "":
             newstr = separator.join(word.capitalize() for word in words)
