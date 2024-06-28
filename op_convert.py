@@ -114,10 +114,22 @@ class MIO3BONE_OT_ConvertNames(Operator):
     }
 
     patterns = (
-        {"pattern": r"(.+)[\._](L|R|Left|Right)(?:(\.\d+))?$", "side_type": "suffix"},
-        {"pattern": r"^(L|R|Left|Right)[\._](.+)(?:(\.\d+))?$", "side_type": "prefix"},
-        {"pattern": r"(.+)(Left|Right)(?:(\.\d+))?$", "side_type": "suffix"},
-        {"pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$", "side_type": "prefix"},
+        {
+            "pattern": r"(.+)[\._](L|R|Left|Right)(?:(\.\d+))?$",
+            "side_type": "suffix",
+        },
+        {
+            "pattern": r"^(L|R|Left|Right)[\._](.+)(?:(\.\d+))?$",
+            "side_type": "prefix",
+        },
+        {
+            "pattern": r"(.+)(Left|Right)(?:(\.\d+))?$",
+            "side_type": "suffix",
+        },
+        {
+            "pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$",
+            "side_type": "prefix",
+        },
         {
             "pattern": r"(.+?)(?:(\.\d+))?$",
             "side_type": "none",
