@@ -1,6 +1,13 @@
 import bpy
 import re
-from bpy.props import EnumProperty, PointerProperty, StringProperty, CollectionProperty
+from bpy.props import (
+    BoolProperty,
+    IntProperty,
+    StringProperty,
+    EnumProperty,
+    PointerProperty,
+    CollectionProperty,
+)
 from bpy.types import Operator, Panel, PropertyGroup
 from bpy.app.translations import pgettext
 
@@ -11,12 +18,13 @@ class MIO3BONE_PG_PrefixItem(PropertyGroup):
 
 class MIO3BONE_PG_PrefixList(PropertyGroup):
     items: CollectionProperty(name="items", type=MIO3BONE_PG_PrefixItem)
-    active_index: bpy.props.IntProperty()
+    active_index: IntProperty()
 
 
 class MIO3BONE_Props(PropertyGroup):
-    prefixs: bpy.props.PointerProperty(name="vglist", type=MIO3BONE_PG_PrefixList)
-    input_prefix: bpy.props.StringProperty(name="Prefix", default="Twist_")
+    remove_prefix: BoolProperty(name="Remove", default=False)
+    prefixs: PointerProperty(name="Prefix", type=MIO3BONE_PG_PrefixList)
+    input_prefix: StringProperty(name="Prefix", default="Twist_")
     convert_types: EnumProperty(
         name="After Format",
         description="",
@@ -106,22 +114,10 @@ class MIO3BONE_OT_ConvertNames(Operator):
     }
 
     patterns = (
-        {
-            "pattern": r"(.+)[\._](L|R|Left|Right)(?:(\.\d+))?$",
-            "side_type": "suffix"
-        },
-        {
-            "pattern": r"^(L|R|Left|Right)[\._](.+)(?:(\.\d+))?$",
-            "side_type": "prefix"
-        },
-       {
-            "pattern": r"(.+)(Left|Right)(?:(\.\d+))?$",
-            "side_type": "suffix"
-        },
-        {
-            "pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$",
-            "side_type": "prefix"
-        },
+        {"pattern": r"(.+)[\._](L|R|Left|Right)(?:(\.\d+))?$", "side_type": "suffix"},
+        {"pattern": r"^(L|R|Left|Right)[\._](.+)(?:(\.\d+))?$", "side_type": "prefix"},
+        {"pattern": r"(.+)(Left|Right)(?:(\.\d+))?$", "side_type": "suffix"},
+        {"pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$", "side_type": "prefix"},
         {
             "pattern": r"(.+?)(?:(\.\d+))?$",
             "side_type": "none",
@@ -192,6 +188,8 @@ class MIO3BONE_OT_ConvertNames(Operator):
                 prefix, name, side, number = self.detect_name_component(
                     bone.name, prefixs
                 )
+                if context.scene.mio3bone.remove_prefix:
+                    prefix = ""
                 name = self.convert_name(name, convert_type)
                 new_name = self.join_name_component(
                     prefix, name, side, number, convert_type
@@ -263,6 +261,9 @@ class MIO3BONE_PT_Main(Panel):
         col = row.column(align=True)
         col.operator(MIO3BONE_OT_PrefixAdd.bl_idname, icon="ADD", text="")
         col.operator(MIO3BONE_OT_PrefixRemove.bl_idname, icon="REMOVE", text="")
+
+        row = layout.row()
+        row.prop(context.scene.mio3bone, "remove_prefix", text="Remove Prefix")
 
 
 class MIO3BONE_UL_PrefixList(bpy.types.UIList):
