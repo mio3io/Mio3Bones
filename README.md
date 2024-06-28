@@ -38,14 +38,12 @@ Blender の `Edit > Preferences > Addons > Install` を開き、ダウンロー�
 -   Upper Arm.L
 -   Upper_Arm.L
 -   L_UpperArm
+-   LeftUpperArm
+-   UpperArmLeft
 -   Hair.001
 -   Hair_L.001
 -   Hair.L.001
 -   (CustomPrefix_)Arm_L
-
-認識されないパターン
-
--   Left/Right のような LR 以外のサフィックス
 
 正常に変換されないパターン
 

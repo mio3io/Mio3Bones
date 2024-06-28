@@ -105,17 +105,28 @@ class MIO3BONE_OT_ConvertNames(Operator):
         },
     }
 
-    patterns = {
-        "Right": {
-            "pattern": r"(.+)[\._]([LR])(?:(\.\d+))?$",
+    patterns = (
+        {
+            "pattern": r"(.+)[\._](L|R|Left|Right)(?:(\.\d+))?$",
+            "side_type": "suffix"
         },
-        "Left": {
-            "pattern": r"^([LR])[\._](.+)(?:(\.\d+))?$",
+        {
+            "pattern": r"^(L|R|Left|Right)[\._](.+)(?:(\.\d+))?$",
+            "side_type": "prefix"
         },
-        "Generic": {
+       {
+            "pattern": r"(.+)(Left|Right)(?:(\.\d+))?$",
+            "side_type": "suffix"
+        },
+        {
+            "pattern": r"^(Left|Right)([A-Z].*)(?:(\.\d+))?$",
+            "side_type": "prefix"
+        },
+        {
             "pattern": r"(.+?)(?:(\.\d+))?$",
+            "side_type": "none",
         },
-    }
+    )
 
     def detect_name_component(self, bone_name, prefixes):
         prefix = ""
@@ -128,12 +139,12 @@ class MIO3BONE_OT_ConvertNames(Operator):
         return prefix, name, side, number
 
     def detect_pattern(self, name):
-        for type, data in self.patterns.items():
+        for data in self.patterns:
             match = re.match(data["pattern"], name)
             if match:
-                if type == "Right":
+                if data["side_type"] == "suffix":
                     return match.group(1), match.group(2), match.group(3) or ""
-                elif type == "Left":
+                elif data["side_type"] == "prefix":
                     return match.group(2), match.group(1), match.group(3) or ""
                 else:
                     return match.group(1), "", match.group(2) or ""
@@ -141,6 +152,10 @@ class MIO3BONE_OT_ConvertNames(Operator):
 
     def join_name_component(self, prefix, name, side, number, convert_type):
         conv_data = self.conventions[convert_type]
+        if side == "Left":
+            side = "L"
+        if side == "Right":
+            side = "R"
         if side == "":
             return "".join([name, number])
         elif self.conventions[convert_type]["side_type"] == "suffix":
