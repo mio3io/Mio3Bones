@@ -160,10 +160,7 @@ class MIO3BONE_OT_ConvertNames(Operator):
 
     def join_name_component(self, prefix, name, side, number, convert_type):
         conv_data = self.conventions[convert_type]
-        if side == "Left":
-            side = "L"
-        if side == "Right":
-            side = "R"
+        side = side[0] if side in ["Left", "Right"] else side
         if side == "":
             return "".join([name, number])
         elif self.conventions[convert_type]["side_type"] == "suffix":
