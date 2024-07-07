@@ -16,8 +16,8 @@ class MIO3BONE_OT_ConvertByPreset(Operator):
     type: bpy.props.EnumProperty(
         default="VROID_HUMANOID",
         items=[
-            ("VROID_HUMANOID", "VRoid → Humanoid", ""),
-            ("MMD_HUMANOID", "MMD → Humanoid", ""),
+            ("VROID_HUMANOID", "VRoid → UpperArm_L", ""),
+            ("MMD_HUMANOID", "MMD → UpperArm_L", ""),
         ],
     )
     reversed: bpy.props.BoolProperty(name="reversed", default=False)
@@ -79,15 +79,15 @@ class MIO3BONE_PT_ConvertByPreset(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Mio3"
-    bl_label = "Humanoid Convert"
+    bl_label = "Preset Convert"
     bl_parent_id = "MIO3BONE_PT_Main"
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("mio3bone.convert_preset", text="VRoid → Humanoid").type = (
+        layout.operator("mio3bone.convert_preset", text="VRoid → UpperArm_L").type = (
             "VROID_HUMANOID"
         )
-        layout.operator("mio3bone.convert_preset", text="MMD → Humanoid").type = (
+        layout.operator("mio3bone.convert_preset", text="MMD → UpperArm_L").type = (
             "MMD_HUMANOID"
         )
 
