@@ -22,6 +22,7 @@ class MIO3BONE_PG_PrefixList(PropertyGroup):
 
 
 class MIO3BONE_Props(PropertyGroup):
+    side_long: BoolProperty(name="Side Long", default=False)
     remove_prefix: BoolProperty(name="Remove", default=False)
     prefixs: PointerProperty(name="Prefix", type=MIO3BONE_PG_PrefixList)
     input_prefix: StringProperty(name="Prefix", default="Twist_")
@@ -160,7 +161,6 @@ class MIO3BONE_OT_ConvertNames(Operator):
 
     def join_name_component(self, prefix, name, side, number, convert_type):
         conv_data = self.conventions[convert_type]
-        side = side[0] if side in ["Left", "Right"] else side
         if side == "":
             return "".join([name, number])
         elif self.conventions[convert_type]["side_type"] == "suffix":
@@ -174,7 +174,7 @@ class MIO3BONE_OT_ConvertNames(Operator):
         return newstr
 
     def convert_name(self, name, to_conv):
-        if re.match(r'^[a-zA-Z0-9\s_.\-]+$', name):
+        if re.match(r"^[a-zA-Z0-9\s_.\-]+$", name):
             words = re.findall(r"[A-Z][a-z]*|[a-z]+", name)
         else:
             words = [name]
@@ -184,6 +184,11 @@ class MIO3BONE_OT_ConvertNames(Operator):
         else:
             newstr = separator.join(words)
         return newstr
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj is not None and obj.type == "ARMATURE"
 
     def execute(self, context):
         armature = context.active_object
@@ -202,6 +207,13 @@ class MIO3BONE_OT_ConvertNames(Operator):
                 )
                 if context.scene.mio3bone.remove_prefix:
                     prefix = ""
+
+                if context.scene.mio3bone.side_long:
+                    side = "Left" if side == "L" else side
+                    side = "Right" if side == "R" else side
+                else:
+                    side = side[0] if side in ["Left", "Right"] else side
+
                 name = self.convert_name(name, convert_type)
                 new_name = self.join_name_component(
                     prefix, name, side, number, convert_type
@@ -238,11 +250,12 @@ class MIO3BONE_OT_PrefixRemove(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MIO3BONE_PT_Main(Panel):
+class MIO3BONE_PT_Convert(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Mio3"
-    bl_label = "Mio3 Bones"
+    bl_label = "Format Convert"
+    bl_parent_id = "MIO3BONE_PT_Main"
 
     def draw(self, context):
         layout = self.layout
@@ -274,8 +287,8 @@ class MIO3BONE_PT_Main(Panel):
         col.operator(MIO3BONE_OT_PrefixAdd.bl_idname, icon="ADD", text="")
         col.operator(MIO3BONE_OT_PrefixRemove.bl_idname, icon="REMOVE", text="")
 
-        row = layout.row()
-        row.prop(context.scene.mio3bone, "remove_prefix", text="Remove Prefix")
+        layout.row().prop(context.scene.mio3bone, "remove_prefix", text="Remove Prefix")
+        layout.row().prop(context.scene.mio3bone, "side_long", text="L/R -> Left/Right")
 
 
 class MIO3BONE_UL_PrefixList(bpy.types.UIList):
@@ -294,7 +307,7 @@ classes = (
     MIO3BONE_OT_PrefixAdd,
     MIO3BONE_OT_PrefixRemove,
     MIO3BONE_UL_PrefixList,
-    MIO3BONE_PT_Main,
+    MIO3BONE_PT_Convert,
 )
 
 

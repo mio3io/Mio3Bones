@@ -1,8 +1,9 @@
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, Panel
 from bpy.props import EnumProperty, BoolProperty
 from bpy.app.translations import pgettext
 from . import op_convert
+from . import op_replace
 
 bl_info = {
     "name": "Mio3 Bones",
@@ -269,8 +270,17 @@ translation_dict = {
     }
 }
 
+class MIO3BONE_PT_Main(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Mio3"
+    bl_label = "Mio3 Bones"
 
-classes = [MIO3_OT_bone_evenly, MIO3_OT_bone_align, MIO3_OT_bone_numbering]
+    def draw(self, context):
+        layout = self.layout
+
+
+classes = [MIO3_OT_bone_evenly, MIO3_OT_bone_align, MIO3_OT_bone_numbering, MIO3BONE_PT_Main]
 
 
 def register():
@@ -278,6 +288,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     op_convert.register()
+    op_replace.register()
     bpy.types.VIEW3D_MT_transform_armature.append(menu_transform)
     bpy.types.VIEW3D_MT_edit_armature_names.append(menu_name)
     bpy.types.VIEW3D_MT_armature_context_menu.append(menu)
@@ -287,6 +298,7 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     op_convert.unregister()
+    op_replace.unregister()
     bpy.types.VIEW3D_MT_transform_armature.remove(menu_transform)
     bpy.types.VIEW3D_MT_edit_armature_names.remove(menu_name)
     bpy.types.VIEW3D_MT_armature_context_menu.remove(menu)
