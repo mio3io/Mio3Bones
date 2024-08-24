@@ -256,6 +256,7 @@ class MIO3BONE_PT_Convert(Panel):
     bl_category = "Mio3"
     bl_label = "Format Convert"
     bl_parent_id = "MIO3BONE_PT_Main"
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         layout = self.layout
